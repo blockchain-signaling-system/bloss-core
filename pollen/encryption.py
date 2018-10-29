@@ -1,0 +1,136 @@
+import base64
+import os
+
+from cryptography.exceptions import InvalidSignature
+from cryptography.fernet import Fernet
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives.asymmetric import rsa
+
+import paths
+from logger import Logger
+
+
+class PollenEncryptionException(Exception):
+    def __init__(self, message):
+        self.message = message
+
+    def __str__(self):
+        return repr(self.message)
+
+
+class PollenEncryption:
+    def __init__(self):
+        self._logger = Logger("Pollen")
+        self._private_key = self._load_private_key()
+        if self._private_key is not None:
+            self._public_key = self._private_key.public_key()
+
+    def _load_private_key(self):
+        private_key = None
+        path = os.path.join(paths.ROOT_DIR, "private_key.pem")
+        if os.path.isfile(path):
+            try:
+                with open(path) as key_file:
+                    private_key = serialization.load_pem_private_key(
+                        key_file.read(),
+                        password=None,
+                        backend=default_backend()
+                    )
+            except:
+                self._logger.error("Failed to load private key from {}"
+                                   .format(path))
+        else:
+            private_key = rsa.generate_private_key(
+                public_exponent=65537,
+                key_size=2048,
+                backend=default_backend()
+            )
+            with open(path, "wb") as key_file:
+                key_file.write(private_key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.TraditionalOpenSSL,
+                    encryption_algorithm=serialization.NoEncryption(),
+                ))
+        return private_key
+
+    def get_serialized_public_key(self):
+        return self._public_key.public_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PublicFormat.SubjectPublicKeyInfo
+        )
+
+    def encrypt(self, to_sign, data, serialized_public_key):
+        public_key = serialization.load_pem_public_key(
+            serialized_public_key,
+            backend=default_backend()
+        )
+        symmetric_key = Fernet.generate_key()
+        encrypted_symmetric_key = base64.b64encode(
+            public_key.encrypt(
+                bytes(symmetric_key),
+                padding.OAEP(
+                    mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                    algorithm=hashes.SHA256(),
+                    label=None
+                )
+            )
+        )
+        cipher = Fernet(symmetric_key)
+        encrypted_data = cipher.encrypt(bytes(data))
+        signature = base64.b64encode(
+            self._private_key.sign(
+                bytes(to_sign),
+                padding.PSS(
+                    mgf=padding.MGF1(hashes.SHA256()),
+                    salt_length=padding.PSS.MAX_LENGTH
+                ),
+                hashes.SHA256()
+            )
+        )
+        return {"encrypted_symmetric_key": encrypted_symmetric_key,
+                "signature": signature,
+                "encrypted_data": encrypted_data}
+
+    def decrypt(self, encrypted_payload):
+        message_keys = ["encrypted_symmetric_key",
+                        "signature",
+                        "encrypted_data"]
+        if any(key not in encrypted_payload for key in message_keys):
+            raise PollenEncryptionException("Unable to decrypt malformed data")
+        symmetric_key = self._private_key.decrypt(
+            base64.b64decode(encrypted_payload['encrypted_symmetric_key']),
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA256()),
+                algorithm=hashes.SHA256(),
+                label=None
+            )
+        )
+        try:
+            cipher = Fernet(symmetric_key)
+            return cipher.decrypt(bytes(encrypted_payload['encrypted_data']))
+        except:
+            pass
+        return encrypted_payload
+
+    @staticmethod
+    def verify(signed_hash, signature, serialized_public_key):
+        public_key = serialization.load_pem_public_key(
+            serialized_public_key,
+            backend=default_backend()
+        )
+        try:
+            public_key.verify(
+                base64.b64decode(signature),
+                bytes(signed_hash),
+                padding.PSS(
+                    mgf=padding.MGF1(hashes.SHA256()),
+                    salt_length=padding.PSS.MAX_LENGTH
+                ),
+                hashes.SHA256()
+            )
+            return True
+        except InvalidSignature as e:
+            return False

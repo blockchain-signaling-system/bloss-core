@@ -33,14 +33,29 @@ class BloSS:
             try:
                 attack_report = self._pollen_blockchain.retrieve_attackers()
 
+                # First POST to the bloss-node instance running on
+                # ['ENDPOINT']['NODE'],
+                # Add NODE = http://172.10.15.15:3001 to config.ini on nodes
+                # then POST to /api/v1.0/report
+
+                if attack_report:
+                    requests.post(self._config['ENDPOINT']['NODE']
+                                  + "/api/v1.0/report",
+                                  json=json.dumps(
+                                      json.loads(
+                                          str(attack_report)
+                                      )
+                                  )
+                                  )
+
                 if attack_report:
                     requests.post(self._config['ENDPOINT']['STALK']
                                   + "/api/v1.0/mitigate",
                                   json=json.dumps(
-                                          json.loads(
-                                              str(attack_report)
-                                          )
-                                       )
+                                      json.loads(
+                                          str(attack_report)
+                                      )
+                                  )
                                   )
                     self._logger.info("Successfully retrieved {} attackers "
                                       "targeting {}"

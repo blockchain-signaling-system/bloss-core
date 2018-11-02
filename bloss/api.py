@@ -1,6 +1,6 @@
 import json
 
-from flask import Flask, request
+from flask import Flask, request, jsonify, Response
 from flask_restful import abort
 
 from configuration import Configuration
@@ -38,3 +38,8 @@ def set_blocked():
     except:
         return "Failed to mark attack report hash as blocked", 500
     return "Successfully marked attack report hash as blocked", 201
+
+@app.route('/api/v1.0/ping', methods=['GET'])
+def ping():
+    return Response("{'isControllerAvailable':'true'}", status=201, mimetype='application/json')
+

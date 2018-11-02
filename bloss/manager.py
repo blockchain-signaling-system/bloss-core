@@ -20,13 +20,14 @@ class BloSS:
         retrieval_thread = Thread(target=self._retrieve_attackers_periodically)
         retrieval_thread.daemon = True
         retrieval_thread.start()
+
         self._api_thread = Thread(target=self._start_api)
         self._api_thread.daemon = True
         self._api_thread.start()
 
     def _start_api(self):
         api.pollen_blockchain = self._pollen_blockchain
-        api.app.run(debug=False, host="localhost", port=6000)
+        api.app.run(debug=False, host='0.0.0.0', port=6000)
 
     def _retrieve_attackers_periodically(self):
         while True:
@@ -64,7 +65,6 @@ class BloSS:
                 time.sleep(self._config['INTERVAL']['RETRIEVE_SECONDS'])
             except Exception as e:
                 time.sleep(self._config['INTERVAL']['RETRIEVE_SECONDS'])
-
 
 if __name__ == '__main__':
     BloSS()

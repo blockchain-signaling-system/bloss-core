@@ -42,14 +42,14 @@ class BloSS:
                                       )
                                   )
                                   )
-                    requests.post(self._config['ENDPOINT']['STALK']
-                                  + "/api/v1.0/mitigate",
-                                  json=json.dumps(
-                                      json.loads(
-                                          str(attack_report)
-                                      )
-                                  )
-                                  )
+                    # requests.post(self._config['ENDPOINT']['STALK']
+                    #               + "/api/v1.0/mitigate",
+                    #               json=json.dumps(
+                    #                   json.loads(
+                    #                       str(attack_report)
+                    #                   )
+                    #               )
+                    #               )
                     self._logger.info("[BLOSS]:attack_report {}".format(attack_report))
                     self._logger.info(str(attack_report))
                     self._logger.info("Successfully retrieved {} attackers "

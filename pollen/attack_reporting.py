@@ -1,6 +1,8 @@
 import json
 from datetime import datetime
 
+from logger import Logger
+
 
 class AttackReportingException(Exception):
     def __init__(self, message):
@@ -100,6 +102,7 @@ class AttackReport(object):
 class AttackReporting:
     def __init__(self, config):
         self._config = config
+        self._logger = Logger("Pollen")
         self._last_report_timestamp = datetime.now()
         self._last_attack_reports = []
 
@@ -146,6 +149,8 @@ class AttackReporting:
     def parse_attack_report_message(self, message):
         message_keys = ["target", "action", "timestamp",
                         "subnetwork", "addresses", "hash"]
+        self._logger.debug("[POLLEN]parse_attack_report_message, message: {}".format(message))
+        self._logger.debug("[POLLEN]parse_attack_report_message, type of message: {}".format(type(message)))
         if any(key not in message for key in message_keys):
             raise AttackReportingException('Attack report message malformed.')
         if type(message) != dict:
@@ -158,8 +163,10 @@ class AttackReporting:
         for key, value in message.iteritems():
             if key == "target":
                 target = value
+                self._logger.debug("Inside target: {}".format(target))
             elif key == "action":
                 action = value
+                self._logger.debug("Inside action: {}".format(action))
             elif key == "timestamp":
                 timestamp = datetime.strptime(value, timestamp_format)
                 current_timestamp = datetime.now()
@@ -167,19 +174,75 @@ class AttackReporting:
                                            - timestamp).total_seconds()
                 if (delta_timestamp_seconds
                         >= self._config['INTERVAL']
-                                       ['MESSAGE_LIFETIME_SECONDS']):
+                        ['MESSAGE_LIFETIME_SECONDS']):
                     return None
+                self._logger.debug("Inside timestamp: {}".format(timestamp))
             elif key == "subnetwork":
                 subnetwork = str(value)
+                self._logger.debug("Inside subnetwork: {}".format(subnetwork))
             elif key == "addresses":
                 addresses = set(value)
-
+                self._logger.debug("Inside addresses: {}".format(addresses))
             elif key == "hash":
                 hash = value
-
+                self._logger.debug("Inside hash: {}".format(hash))
+        self._logger.debug("Target:{}, Action:{}, Timestamp: {}, Subnetwork:{}, Addresses: {}, Hash:{}"
+                           .format(str(target), str(action), str(timestamp), str(subnetwork), str(addresses),
+                                   str(hash)))
         return AttackReport(target=target,
                             action=action,
                             timestamp=timestamp.strftime(timestamp_format),
                             subnetwork=subnetwork,
                             addresses=addresses,
                             hash=hash)
+
+    # def parse_attack_report_message(self, message):
+    #     # self._logger.info("Message{}".format(message))
+    #     # self._logger.info(type(message))
+    #     message_keys = ["target", "action", "timestamp",
+    #                     "subnetwork", "addresses", "hash"]
+    #     if any(key not in message for key in message_keys):
+    #         raise AttackReportingException('Attack report message malformed.')
+    #     if type(message) != dict:
+    #         try:
+    #             message = json.loads(message)
+    #             self._logger.debug(message)
+    #         except:
+    #             raise AttackReportingException('Cannot convert to dictionary')
+    #     self._logger.info("Message{}".format(message))
+    #     self._logger.info(type(message))
+    #     timestamp_format = self._config['DEFAULT']['TIMESTAMP_FORMAT']
+    #     target = action = timestamp = subnetwork = addresses = hash = None
+    #     for key, value in message.iteritems():
+    #         if key == "target":
+    #             target = value
+    #         elif key == "action":
+    #             action = value
+    #         elif key == "timestamp":
+    #             # FIX FOR BLOSS_NODE (DONT FORGET TO CHANGE CONFIG) BEGINS HERE
+    #             # timestamp_cut = value.split('.')[0]
+    #             # timestamp = datetime.strptime(timestamp_cut, timestamp_format)
+    #             # FIX FOR BLOSS_NODE (DONT FORGET TO CHANGE CONFIG) ENDS HERE
+    #             timestamp = datetime.strptime(value, timestamp_format)
+    #             current_timestamp = datetime.now()
+    #             delta_timestamp_seconds = (current_timestamp
+    #                                        - timestamp).total_seconds()
+    #             if (delta_timestamp_seconds
+    #                     >= self._config['INTERVAL']
+    #                     ['MESSAGE_LIFETIME_SECONDS']):
+    #                 return None
+    #         elif key == "subnetwork":
+    #             subnetwork = str(value)
+    #         elif key == "addresses":
+    #             addresses = set(value)
+    #             self._logger.info(type(value))
+    #             self._logger.info("Value:{}".format(value))
+    #             self._logger.info("addresses:{}".format(addresses))
+    #         elif key == "hash":
+    #             hash = value
+    #     return AttackReport(target=target,
+    #                         action=action,
+    #                         timestamp=timestamp.strftime(timestamp_format),
+    #                         subnetwork=subnetwork,
+    #                         addresses=addresses,
+    #                         hash=hash)

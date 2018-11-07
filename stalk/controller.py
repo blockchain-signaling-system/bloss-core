@@ -32,7 +32,7 @@ class Controller(app_manager.RyuApp):
 
     def _start_api(self):
         api.stalk_controller = self
-        api.app.run(debug=False, host="localhost", port=6001)
+        api.app.run(debug=False, host='0.0.0.0', port=6001)
 
     def _request_flow_statistics(self):
         while True:
@@ -92,6 +92,9 @@ class Controller(app_manager.RyuApp):
         self._logger.debug("Started blocking for attack report {}"
                            .format(hash(attack_report)))
         blocked_addresses_by_datapath_id = {}
+        self._logger.debug("Started blocking for attack report {}"
+                           .format(str(attack_report)))
+
         for attacker_address in attack_report.addresses:
             attacker = self._hosts.get_host(ip_address=attacker_address)
             datapath = self.get_datapath(attacker.datapath_id)

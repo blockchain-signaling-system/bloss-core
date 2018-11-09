@@ -42,14 +42,6 @@ class BloSS:
                                       )
                                   )
                                   )
-                    # requests.post(self._config['ENDPOINT']['STALK']
-                    #               + "/api/v1.0/mitigate",
-                    #               json=json.dumps(
-                    #                   json.loads(
-                    #                       str(attack_report)
-                    #                   )
-                    #               )
-                    #               )
                     self._logger.info("[BLOSS]:attack_report {}".format(attack_report))
                     self._logger.info(str(attack_report))
                     self._logger.info("Successfully retrieved {} attackers "
@@ -60,50 +52,6 @@ class BloSS:
             except Exception as e:
                 time.sleep(self._config['INTERVAL']['RETRIEVE_SECONDS'])
 
-    if __name__ == '__main__':
-        BloSS()
 
-#     def _retrieve_attackers_periodically(self):
-#         while True:
-#             try:
-#                 attack_report = self._pollen_blockchain.retrieve_attackers()
-#                 # First POST to the bloss-node instance running on
-#                 # ['ENDPOINT']['NODE'],
-#                 # Add NODE = http://172.10.15.15:3001 to config.ini on nodes
-#                 # then POST to /api/v1.0/report
-#                 self._logger.info("JSON: {}"
-#                                   .format(json.dumps(json.loads(str(attack_report)))))
-#                 self._logger.info(type(attack_report))
-#                 self._logger.info(attack_report)
-#                 self._logger.info(str(attack_report))
-#
-#                 if attack_report:
-#                     requests.post(self._config['ENDPOINT']['NODE']
-#                                   + "/api/v1.0/report",
-#                                   json=json.dumps(
-#                                       json.loads(
-#                                           str(attack_report)
-#                                       )
-#                                   )
-#                                   )
-#                     requests.post(self._config['ENDPOINT']['STALK']
-#                                   + "/api/v1.0/mitigate",
-#                                   json=json.dumps(
-#                                       json.loads(
-#                                           str(attack_report)
-#                                       )
-#                                   )
-#                                   )
-#                 self._logger.info("Successfully retrieved {} attackers "
-#                                   "targeting {}"
-#                                   .format(len(attack_report.addresses),
-#                                           attack_report.target))
-#                 time.sleep(self._config['INTERVAL']['RETRIEVE_SECONDS'])
-#             except Exception as e:
-#                 time.sleep(self._config['INTERVAL']['RETRIEVE_SECONDS'])
-#
-#
-# if __name__ == '__main__':
-#     BloSS()
-#
-#
+if __name__ == '__main__':
+    BloSS()

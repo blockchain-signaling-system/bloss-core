@@ -145,7 +145,5 @@ class Controller(app_manager.RyuApp):
             for report in attack_reports:
                 json_reports.append(json.loads(str(report)))
                 count += len(report.addresses)
-            requests.post(
-                self._config['ENDPOINT']['BLOSS'] + '/api/v1.0/report',
-                json=json.dumps(json_reports))
+                requests.post(self._config['ENDPOINT']['NODE'] + "/api/v1.0/alarm", json=json.dumps(json.loads(str(report))))
             self._database.update_reported_addresses(datapath_id, count)

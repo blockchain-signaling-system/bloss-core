@@ -1,7 +1,6 @@
 import json
 
 from flask import Flask, request, jsonify, Response
-import requests
 from flask_restful import abort
 
 from configuration import Configuration
@@ -57,25 +56,3 @@ def set_blocked():
         return "Failed to mark attack report hash as blocked", 500
     return "Successfully marked attack report hash as blocked", 201
 
-
-@app.route('/api/v1.0/ping', methods=['GET'])
-def ping():
-    return Response("{'isControllerAvailable':'true'}", status=201, mimetype='application/json')
-
-
-@app.route('/api/v1.0/mitigatereport', methods=['POST'])
-def mitigatereport():
-    if not request.json:
-        abort(400, message="No attack report provided.")
-    attack_report = json.dumps(request.get_json(force=True))
-    logger.debug("[BLOSS]/mitigatereport/ request.json{}".format(request.json))
-    logger.debug("[BLOSS]/mitigatereport/ attack_report{}".format(attack_report))
-    logger.debug(attack_report)
-    try:
-        if attack_report:
-            requests.post('http://localhost:6001'
-                          + "/api/v1.0/mitigate",
-                          json=attack_report)
-    except:
-        return "Failed to mitigate attack report", 500
-    return "Successfully relayed for mitigation", 201

@@ -32,7 +32,7 @@ def report():
     if json_data is None:
         try:
             json_data = request.json
-            logger.info("[STALK/mitigate (second try block) type(json_date):{}".format(type(json_data)))
+            logger.info("[BLOSS/report (second try block) type(json_date):{}".format(json_data))
             attack_report = attack_reporting.parse_attack_report_from_node(json_data)
             attack_reports.append(attack_report)
         except Exception as e:
@@ -55,4 +55,3 @@ def set_blocked():
     except:
         return "Failed to mark attack report hash as blocked", 500
     return "Successfully marked attack report hash as blocked", 201
-

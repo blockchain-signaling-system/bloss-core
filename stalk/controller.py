@@ -43,7 +43,7 @@ class Controller(app_manager.RyuApp):
 
             if self._config['INTERVAL']['TRAFFIC_STATS_POLLING_SECONDS'] > 0:
                 hub.sleep(self._config['INTERVAL']
-                                      ['TRAFFIC_STATS_POLLING_SECONDS'])
+                          ['TRAFFIC_STATS_POLLING_SECONDS'])
             else:
                 hub.sleep(1)
 
@@ -113,7 +113,7 @@ class Controller(app_manager.RyuApp):
             else:
                 instructions = []
             blocking_duration = (self._config['INTERVAL']
-                                             ['MAX_BLOCKING_DURATION_SECONDS'])
+            ['MAX_BLOCKING_DURATION_SECONDS'])
             mod = parser.OFPFlowMod(datapath=datapath,
                                     command=ofproto.OFPFC_ADD,
                                     priority=999,
@@ -142,9 +142,10 @@ class Controller(app_manager.RyuApp):
         if len(attack_reports) > 0:
             json_reports = []
             count = 0
-            self._database.update_reported_addresses(datapath_id, count)
             for report in attack_reports:
+                self._logger.info("Sent alarm for attack report {}".format(report))
                 json_reports.append(json.loads(str(report)))
                 count += len(report.addresses)
-                requests.post(self._config['ENDPOINT']['NODE']+"/api/v1.0/alarm",json=json.dumps(json.loads(str(report))))
-
+                requests.post(self._config['ENDPOINT']['NODE'] + "/api/v1.0/alarm",
+                              json=json.dumps(json.loads(str(report))))
+                self._database.update_reported_addresses(datapath_id, count)

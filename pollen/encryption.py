@@ -58,8 +58,8 @@ class PollenEncryption:
 
     def get_serialized_public_key(self):
         return self._public_key.public_bytes(
-                encoding=serialization.Encoding.PEM,
-                format=serialization.PublicFormat.SubjectPublicKeyInfo
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo
         )
 
     def encrypt(self, to_sign, data, serialized_public_key):

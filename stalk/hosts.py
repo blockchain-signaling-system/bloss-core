@@ -175,7 +175,7 @@ class Hosts:
         attack_reports = []
         for host in self._hosts[str(datapath_id)]:
             if (host.get_avg_rx_traffic() >= self._config['THRESHOLD']
-                                                         ['BLOCKING_MBPS']):
+            ['BLOCKING_MBPS']):
                 for subnetwork, addresses in host.attackers:
                     timestamp = datetime.now().strftime(
                         self._config['DEFAULT']['TIMESTAMP_FORMAT']

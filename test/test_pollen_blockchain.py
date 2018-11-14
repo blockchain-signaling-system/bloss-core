@@ -22,14 +22,14 @@ class TestPollenBlockchain(unittest.TestCase):
         )
 
     def test_load_and_compile_contract_binary(self):
-        contract_source_code = ("pragma solidity ^0.4.10;\n" 
-                                "\n" 
-                                "contract TestReport {\n" 
-                                "\n" 
-                                "    string helloWorld;\n" 
-                                "\n" 
-                                "    function TestReport() public\n" 
-                                "    {\n" 
+        contract_source_code = ("pragma solidity ^0.4.10;\n"
+                                "\n"
+                                "contract TestReport {\n"
+                                "\n"
+                                "    string helloWorld;\n"
+                                "\n"
+                                "    function TestReport() public\n"
+                                "    {\n"
                                 "        helloWorld = 'Hello World';\n"
                                 "    }\n"
                                 "}")

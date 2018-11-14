@@ -42,18 +42,18 @@ class PollenBlockchain:
                                          ['ACCOUNT_UNLOCK_DURATION'])
 
         relay_contract_filename = (self.config['BLOCKCHAIN']
-                                              ['RELAY_SOURCE_FILENAME'])
+        ['RELAY_SOURCE_FILENAME'])
         relay_contract_address = (self.config['BLOCKCHAIN']
-                                             ['RELAY_CONTRACT_ADDRESS'])
+        ['RELAY_CONTRACT_ADDRESS'])
         self.relay_contract = self.web3.eth.contract(
             abi=self._compute_contract_abi(relay_contract_filename),
             address=relay_contract_address
         )
 
         self.system_contract_filename = (self.config['BLOCKCHAIN']
-                                                    ['SYSTEM_SOURCE_FILENAME'])
+        ['SYSTEM_SOURCE_FILENAME'])
         system_contract_address = (self.config['BLOCKCHAIN']
-                                              ['SYSTEM_CONTRACT_ADDRESS'])
+        ['SYSTEM_CONTRACT_ADDRESS'])
         if system_contract_address is not None:
             self.system_contract = self.web3.eth.contract(
                 abi=self._compute_contract_abi(self.system_contract_filename),
@@ -143,7 +143,7 @@ class PollenBlockchain:
             ipfs_hash = str(self.relay_contract.call(
                 {'from': self.account_address,
                  'to': self.relay_contract.address})
-                          .getPublicKey(str(subnetwork)))
+                            .getPublicKey(str(subnetwork)))
             if type(ipfs_hash) is str:
                 return str(self._datastore.retrieve(ipfs_hash))
         except:
@@ -202,11 +202,11 @@ class PollenBlockchain:
             for attack_report in attack_reports:
                 self._logger.info(
                     "Reported {} targeting {}, action: {}, hash: {}, on: {}"
-                    .format(attack_report.addresses,
-                            attack_report.target,
-                            attack_report.action,
-                            hash(attack_report),
-                            attack_report.timestamp))
+                        .format(attack_report.addresses,
+                                attack_report.target,
+                                attack_report.action,
+                                hash(attack_report),
+                                attack_report.timestamp))
                 serialized_public_key = self.get_public_key_for_subnetwork(
                     attack_report.subnetwork)
                 ipfs_hash = self._datastore.store(
@@ -239,7 +239,6 @@ class PollenBlockchain:
                              .parse_attack_report_message(message))
 
             if attack_report and not self._is_blocked(hash(attack_report)):
-
                 self._logger.debug("Retrieved IPs {} targeting {} on {}, to {}"
                                    .format(attack_report.addresses,
                                            attack_report.target,

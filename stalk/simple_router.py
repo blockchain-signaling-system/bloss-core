@@ -33,7 +33,7 @@ class SimpleRouter(app_manager.RyuApp):
         self._ip_to_mac_mappings = {}
         for _, address_mappings in addresses.iteritems():
             self._ip_to_mac_mappings.update(address_mappings)
-        self._ip_to_mac_mappings[self._config['NETWORK']['ROUTER_IP']] =\
+        self._ip_to_mac_mappings[self._config['NETWORK']['ROUTER_IP']] = \
             self._config['NETWORK']['ROUTER_MAC']
         self._out_ports = self._config['NETWORK']['OUT_PORTS']
 
@@ -59,10 +59,10 @@ class SimpleRouter(app_manager.RyuApp):
         match = datapath.ofproto_parser.OFPMatch()
 
         actions = [datapath.ofproto_parser.OFPActionOutput(
-                   datapath.ofproto.OFPP_CONTROLLER,
-                   datapath.ofproto.OFPCML_NO_BUFFER)]
+            datapath.ofproto.OFPP_CONTROLLER,
+            datapath.ofproto.OFPCML_NO_BUFFER)]
         inst = [datapath.ofproto_parser.OFPInstructionActions(
-                datapath.ofproto.OFPIT_APPLY_ACTIONS, actions)]
+            datapath.ofproto.OFPIT_APPLY_ACTIONS, actions)]
         mod = datapath.ofproto_parser.OFPFlowMod(datapath=datapath,
                                                  priority=0,
                                                  buffer_id=0xffffffff,
@@ -203,25 +203,25 @@ class SimpleRouter(app_manager.RyuApp):
     @staticmethod
     def add_flow(datapath, ethertype, source_ip, target_ip, out_port):
         match = datapath.ofproto_parser.OFPMatch(
-                eth_type=ethertype,
-                ipv4_src=source_ip,
-                ipv4_dst=target_ip )
+            eth_type=ethertype,
+            ipv4_src=source_ip,
+            ipv4_dst=target_ip)
         actions = [datapath.ofproto_parser.OFPActionOutput(out_port, 0)]
         inst = [datapath.ofproto_parser.OFPInstructionActions(
-                datapath.ofproto.OFPIT_APPLY_ACTIONS, actions)]
+            datapath.ofproto.OFPIT_APPLY_ACTIONS, actions)]
         mod = datapath.ofproto_parser.OFPFlowMod(
-                cookie=0,
-                cookie_mask=0,
-                flags=datapath.ofproto.OFPFF_CHECK_OVERLAP,
-                table_id=0,
-                command=datapath.ofproto.OFPFC_ADD,
-                datapath=datapath,
-                idle_timeout=0,
-                hard_timeout=0,
-                priority=0xff,
-                buffer_id=0xffffffff,
-                out_port=datapath.ofproto.OFPP_ANY,
-                out_group=datapath.ofproto.OFPG_ANY,
-                match=match,
-                instructions=inst)
+            cookie=0,
+            cookie_mask=0,
+            flags=datapath.ofproto.OFPFF_CHECK_OVERLAP,
+            table_id=0,
+            command=datapath.ofproto.OFPFC_ADD,
+            datapath=datapath,
+            idle_timeout=0,
+            hard_timeout=0,
+            priority=0xff,
+            buffer_id=0xffffffff,
+            out_port=datapath.ofproto.OFPP_ANY,
+            out_group=datapath.ofproto.OFPG_ANY,
+            match=match,
+            instructions=inst)
         datapath.send_msg(mod)

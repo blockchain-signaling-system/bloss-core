@@ -39,4 +39,3 @@ class Configuration:
                 self.config_parser.write(f)
         except:
             pass
-

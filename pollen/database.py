@@ -18,7 +18,7 @@ class PollenDatabase:
                                              duration="1d",
                                              replication="1",
                                              database=self._config['DATABASE']
-                                                                  ['NAME'])
+                                             ['NAME'])
 
     def _write(self, json_body):
         try:

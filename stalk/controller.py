@@ -136,6 +136,9 @@ class Controller(app_manager.RyuApp):
             requests.post(
                 self._config['ENDPOINT']['BLOSS'] + '/api/v1.0/set_blocked',
                 json=json.dumps(hash_to_block))
+            requests.post(
+                self._config['ENDPOINT']['NODE'] + '/api/v1.0/blocking',
+                json=json.dumps(hash_to_block))
 
     def find_and_report_attackers(self, datapath_id):
         attack_reports = self._hosts.detect_ongoing_attacks(datapath_id)

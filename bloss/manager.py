@@ -43,7 +43,6 @@ class BloSS:
                                   )
                                   )
                     self._logger.info("[BLOSS]:attack_report {}".format(attack_report))
-                    self._logger.info(str(attack_report))
                     self._logger.info("Successfully retrieved {} attackers "
                                       "targeting {}"
                                       .format(len(attack_report.addresses),

@@ -1,24 +1,26 @@
 
-### Original Repo here: https://github.com/savf/BloSS
-# The Blockchain Signaling System
+# `bloss-core`
+- The `bloss-core` component monitors and manages the network traffic of the underlying infrastructure and takes care of the communication with the private PoA Ethereum blockchain, the InfluxDB and also communicates with `bloss-node`. The RESTful interface is used to exchange information (e.g. attack_reports, blocking status, traffic breaches) with bloss-node. 
+  - **Stalk** monitors the network traffic of the underlying networking infrastructure
+  - **Pollen** encapsulates all communication-related tasks, handling the database and Ethereum
+  - **BloSS** is the core component which receives mitigation requests and signals ongoing attacks through *Pollen* and stops attack traffic through *Stalk*
 
+![bloss-node-and-core](/figures/bloss-node-and-core.png)
+
+# The Blockchain Signaling System (BloSS) architecture
 Enabling cooperative, multi-domain DDoS defense by distributing attack reports through Ethereum among participating autonomous systems.
+- **The BloSS architecture consists of three components.**
+  - **`bloss-core`**: The [bloss-core](http://github.com/blockchain-signaling-system/bloss-core) component monitors and manages the network traffic of the underlying infrastructure and takes care of the communication with the private PoA Ethereum blockchain, the InfluxDB and also communicates with `bloss-node`. The RESTful interface is used to exchange information (e.g. attack_reports, blocking status, traffic breaches) with bloss-node. 
+  - **`bloss-node`**: : This repository.
+  - **`bloss-dashboard`**: The [bloss-dashboard](http://github.com/blockchain-signaling-system/bloss-dashboard) component is a front-end dashboard displaying relevant information for the human analyst. The bloss-dashboard is implemented as a single-page application (SPA) and attached to `bloss-node`
 
-The entire system consists of three main components:
-<p align="left">
-<img align="left" width="300" src="./platform.svg">
+![bloss-full-architecture](/figures/bloss-full-architecture.png)
+![bloss-communication-interfaces](/figures/bloss-communication-interfaces.png)
 
-**Stalk** monitors the network traffic of the underlying networking infrastructure
-
-**Pollen** encapsulates all communication-related tasks, handling the database and Ethereum
-
-**BloSS** is the core component which receives mitigation requests and signals ongoing attacks through *Pollen* and stops attack traffic through *Stalk*
-</p>
-
-<br/><br/><br/><br/><br/><br/><br/>
+# `bloss-core` 
 ## Installation
 ### Python Prerequisites
-The entire BloSS is written in Python 2.7, so you need to have a working Python installation as well as the required packages, which can be found in `python_requirements.txt` and can be installed through pip (you can get pip for example through `apt-get install python-pip`):
+The entire `bloss-core` is written in Python 2.7, so you need to have a working Python installation as well as the required packages, which can be found in `python_requirements.txt` and can be installed through pip (you can get pip for example through `apt-get install python-pip`):
 
 >`pip install -r python_requirements.txt`
 
